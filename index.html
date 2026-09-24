@@ -8,6 +8,7 @@
     <h1>Well, hello there!</h1>
 
     <!-- De link/knop om de pop-up te openen -->
+<!-- De link/knop om de pop-up te openen -->
 <button id="openModalBtn" style="padding: 10px 20px; font-size: 16px; cursor: pointer; background: #0076ff; color: white; border: none; border-radius: 5px;">
     Laat een bericht achter
 </button>
@@ -19,48 +20,97 @@
         <!-- Sluitknop (X) -->
         <span id="closeModalBtn" style="position: absolute; right: 15px; top: 10px; font-size: 24px; cursor: pointer; color: #888;">&times;</span>
         
-        <h3 style="margin-top: 0;">Drop me a message</h3>
+        <h3 style="margin-top: 0; color: #333;">Drop me a message</h3>
         
-        <!-- VERVANG DE URL HIERONDER MET JOUW EIGEN FORMSPREE-URL -->
-        <form action="https://formspree.io/f/mkjgzbvg" method="POST">
+        <!-- Jouw unieke AJAX Formspree Formulier -->
+        <form id="ajax-form" data-action="https://formspree.io" method="POST">
             <div style="margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Jouw e-mailadres (optioneel):</label>
+                <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #333;">Jouw e-mailadres (optioneel):</label>
                 <input type="email" name="email" style="width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px;">
             </div>
             <div style="margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Bericht:</label>
+                <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #333;">Bericht:</label>
                 <textarea name="message" rows="5" required style="width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; resize: vertical;"></textarea>
             </div>
-            <button type="submit" style="background: #28a745; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; width: 100%; font-size: 16px;">
+            <button type="submit" id="submitBtn" style="background: #28a745; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; width: 100%; font-size: 16px;">
                 Verzenden
-            </div>
+            </button>
+            <!-- Statusbericht voor de succes/foutmelding -->
+            <p id="form-status" style="margin-top: 15px; display: none; text-align: center; font-weight: bold;"></p>
         </form>
     </div>
 </div>
 
-<!-- JavaScript om de pop-up te openen en te sluiten -->
+<!-- JavaScript voor Pop-up Logica & AJAX Verzending (vlak voor </body>) -->
 <script>
     const modal = document.getElementById("contactModal");
     const openBtn = document.getElementById("openModalBtn");
     const closeBtn = document.getElementById("closeModalBtn");
+    const form = document.getElementById("ajax-form");
+    const status = document.getElementById("form-status");
+    const submitBtn = document.getElementById("submitBtn");
 
-    // Open de pop-up met een flexbox layout zodat hij netjes gecentreerd staat
+    // 1. Open de pop-up
     openBtn.onclick = function() {
         modal.style.display = "flex";
     }
 
-    // Sluit de pop-up bij een klik op de X
+    // 2. Sluit de pop-up via de X
     closeBtn.onclick = function() {
         modal.style.display = "none";
     }
 
-    // Sluit de pop-up als er buiten het formulier wordt geklikt
+    // 3. Sluit de pop-up bij een klik buiten het venster
     window.onclick = function(event) {
         if (event.target == modal) {
             modal.style.display = "none";
         }
     }
+
+    // 4. Formulier op de achtergrond verzenden (Zonder Formspree pagina te tonen)
+    form.addEventListener("submit", async function(event) {
+        event.preventDefault(); 
+        
+        submitBtn.innerText = "Verzenden...";
+        submitBtn.disabled = true;
+
+        const data = new FormData(event.target);
+        const endpoint = form.getAttribute("data-action");
+
+        try {
+            const response = await fetch(endpoint, {
+                method: form.method,
+                body: data,
+                headers: { 'Accept': 'application/json' }
+            });
+
+            if (response.ok) {
+                status.style.color = "#28a745";
+                status.innerText = "Bedankt! Je bericht is succesvol verzonden.";
+                status.style.display = "block";
+                form.reset(); 
+                
+                // Sluit de pop-up na 2,5 seconden automatisch
+                setTimeout(() => {
+                    modal.style.display = "none";
+                    status.style.display = "none";
+                    submitBtn.innerText = "Verzenden";
+                    submitBtn.disabled = false;
+                }, 2500);
+
+            } else {
+                throw new Error();
+            }
+        } catch (error) {
+            status.style.color = "#dc3545";
+            status.innerText = "Oeps! Er ging iets mis bij het verzenden.";
+            status.style.display = "block";
+            submitBtn.innerText = "Verzenden";
+            submitBtn.disabled = false;
+        }
+    });
 </script>
+
 
 </body>
 </html>
