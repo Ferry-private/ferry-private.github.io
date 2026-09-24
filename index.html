@@ -6,6 +6,61 @@
 </head>
 <body>
     <h1>Well, hello there!</h1>
-    <a href="contact.html">Click here to drop me a message</a>
+
+    <!-- De link/knop om de pop-up te openen -->
+<button id="openModalBtn" style="padding: 10px 20px; font-size: 16px; cursor: pointer; background: #0076ff; color: white; border: none; border-radius: 5px;">
+    Laat een bericht achter
+</button>
+
+<!-- De Pop-up (Modal) Structuur & Styling -->
+<div id="contactModal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); justify-content: center; align-items: center;">
+    <div style="background: white; padding: 30px; border-radius: 8px; width: 90%; max-width: 450px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); position: relative; font-family: sans-serif;">
+        
+        <!-- Sluitknop (X) -->
+        <span id="closeModalBtn" style="position: absolute; right: 15px; top: 10px; font-size: 24px; cursor: pointer; color: #888;">&times;</span>
+        
+        <h3 style="margin-top: 0;">Drop me a message</h3>
+        
+        <!-- VERVANG DE URL HIERONDER MET JOUW EIGEN FORMSPREE-URL -->
+        <form action="https://formspree.io" method="POST">
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Jouw e-mailadres (optioneel):</label>
+                <input type="email" name="email" style="width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px;">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Bericht:</label>
+                <textarea name="message" rows="5" required style="width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; resize: vertical;"></textarea>
+            </div>
+            <button type="submit" style="background: #28a745; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; width: 100%; font-size: 16px;">
+                Verzenden
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- JavaScript om de pop-up te openen en te sluiten -->
+<script>
+    const modal = document.getElementById("contactModal");
+    const openBtn = document.getElementById("openModalBtn");
+    const closeBtn = document.getElementById("closeModalBtn");
+
+    // Open de pop-up met een flexbox layout zodat hij netjes gecentreerd staat
+    openBtn.onclick = function() {
+        modal.style.display = "flex";
+    }
+
+    // Sluit de pop-up bij een klik op de X
+    closeBtn.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    // Sluit de pop-up als er buiten het formulier wordt geklikt
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+</script>
+
 </body>
 </html>
